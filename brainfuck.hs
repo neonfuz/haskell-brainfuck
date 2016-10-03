@@ -23,8 +23,8 @@ bf prog mem stdIn stdOut =
     ']' -> bf (if current mem /= 0 then (loop backward (next prog) 1) else (next prog)) mem stdIn stdOut
     _ -> "unhandled"
   where set mem val = case mem of (Tape b c e) -> Tape b val e
-        increment mem = set mem (current mem + 1)
-        decrement mem = set mem (current mem - 1)
+        increment mem = set mem $ (current mem + 1 + 256) `mod` 256
+        decrement mem = set mem $ (current mem - 1 + 256) `mod` 256
         forward  = (next, [('[', 1), (']', -1)])
         backward = (prev, [('[', -1), (']', 1)])
         loop direction prog count = case (prog, count) of
