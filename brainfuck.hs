@@ -27,7 +27,6 @@ bf prog mem stdIn stdOut =
         decrement mem = set mem $ (current mem - 1 + 256) `mod` 256
         forward  = (next, [('[', 1), (']', -1)])
         backward = (prev, [('[', -1), (']', 1)])
-        loop direction prog count = case (prog, count) of
-          (prog, 0) -> next prog
-          (prog@(Tape _ c _), count) ->
-            loop direction (fst direction prog) (count + (fromMaybe 0 $ lookup c $ snd direction))
+        loop _ prog 0 = next prog
+        loop dir@(next,table) prog@(Tape _ c _) level =
+          loop dir (next prog) (level + (fromMaybe 0 $ lookup c table))
