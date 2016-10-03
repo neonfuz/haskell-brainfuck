@@ -7,7 +7,7 @@ bfCompile program = tapeFromList $ filter (`elem` "+-<>[],.") program ++ "E"
 
 newMem = Tape (repeat 0) 0 (repeat 0)
 
-run program = bf (bfCompile program) newMem "" ""
+run program stdin = bf (bfCompile program) newMem stdin ""
 
 bf :: Tape Char -> Tape Int -> String -> String -> String
 bf prog mem stdIn stdOut =
