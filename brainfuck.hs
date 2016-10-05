@@ -5,9 +5,9 @@ import Data.Maybe (fromMaybe)
 bfCompile :: String -> Tape Char
 bfCompile program = tapeFromList $ filter (`elem` "+-<>[],.") program ++ "E"
 
-newMem = Tape (repeat 0) 0 (repeat 0)
-
+run :: String -> String -> String
 run program stdin = bf (bfCompile program) newMem stdin ""
+  where newMem = Tape (repeat 0) 0 (repeat 0)
 
 bf :: Tape Char -> Tape Int -> String -> String -> String
 bf prog mem stdIn stdOut =
@@ -21,7 +21,6 @@ bf prog mem stdIn stdOut =
     '.' -> bf (next prog) mem stdIn (chr (current mem) : stdOut)
     '[' -> bf (if current mem == 0 then (loop forward (next prog) 1) else (next prog)) mem stdIn stdOut
     ']' -> bf (if current mem /= 0 then (loop backward (prev prog) 1) else (next prog)) mem stdIn stdOut
-    _ -> "unhandled"
   where set mem val = case mem of (Tape b c e) -> Tape b val e
         increment mem = set mem $ (current mem + 1 + 256) `mod` 256
         decrement mem = set mem $ (current mem - 1 + 256) `mod` 256
