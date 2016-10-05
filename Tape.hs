@@ -17,14 +17,3 @@ prev (Tape (a:as) b c) = Tape as a (b:c)
 
 next :: Tape a -> Tape a
 next (Tape a b (c:cs)) = Tape (b:a) c cs
-
-
-data Event = Joy
-             { xaxis :: Int
-             , yaxis :: Int
-             }
-           | Keyboard
-             { keycode :: Int
-             , duration :: Int
-             } deriving (Show)
-
