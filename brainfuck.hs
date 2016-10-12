@@ -17,13 +17,15 @@ bf prog mem stdIn stdOut =
     '-' -> bf (next prog) (decrement mem) stdIn stdOut
     '<' -> bf (next prog) (prev mem) stdIn stdOut
     '>' -> bf (next prog) (next mem) stdIn stdOut
-    ',' -> bf (next prog) (set mem $ ord $ head stdIn) (tail stdIn) stdOut
+    ',' -> bf (next prog) (set (ord . head $ stdIn) mem) (tail stdIn) stdOut
     '.' -> bf (next prog) mem stdIn (chr (current mem) : stdOut)
     '[' -> bf (if current mem == 0 then (loop forward (next prog) 1) else (next prog)) mem stdIn stdOut
     ']' -> bf (if current mem /= 0 then (loop backward (prev prog) 1) else (next prog)) mem stdIn stdOut
-  where set mem val = case mem of (Tape b c e) -> Tape b val e
-        increment mem = set mem $ (current mem + 1 + 256) `mod` 256
-        decrement mem = set mem $ (current mem - 1 + 256) `mod` 256
+  where apply func mem = case mem of (Tape b c e) -> Tape b (func c) e
+        set val = apply (const val)
+        increment = apply (limit . (+1))
+        decrement = apply (limit . (subtract 1))
+        limit = (`mod` 256) . (+256)
         forward  = (next, [('[', 1), (']', -1)])
         backward = (prev, [('[', -1), (']', 1)])
         loop _ prog 0 = next prog
